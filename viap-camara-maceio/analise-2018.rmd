@@ -1,0 +1,121 @@
+---
+title: "Análise VIAP Câmara Maceió 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(dplyr)
+require(knitr)
+require(ggplot2)
+```
+
+# Análise VIAP Maceió 2018
+
+```{r}
+viaps <- read.csv(url("https://querosaber-al.info/viap-maceio-2018.csv"))
+viaps <- viaps[,-8]
+```
+
+## Resumir despesas por categoria
+
+```{r results='asis'}
+kable(viaps %>%
+        group_by(categoria) %>%
+        summarise(soma=sum(valor)))
+```
+
+## Somatório de despesas pertencentes a categoria "Outras"
+
+```{r}
+viaps %>% filter(categoria == 'Outras') %>% summarise(sum(valor))
+```
+
+## Para cada categoria, ordenar os vereadores pelo maior gasto anual
+
+```{r results='asis'}
+kable(viaps %>%
+        group_by(categoria, nome) %>%
+        summarise(soma=sum(valor)) %>%
+        arrange(desc(soma), .by_group=T))
+```
+
+
+## Quanto foi gasto em 2018 com VIAPS?
+
+```{r}
+sum(viaps$valor)
+```
+
+## Ordenar vereadores por total de gastos
+
+```{r results='asis'}
+kable(viaps %>% group_by(nome) %>% summarise(soma=sum(valor)) %>% arrange(desc(soma)))
+```
+
+
+## Mostrar as 10 menores despesas da casa
+
+```{r results='asis'}
+kable(viaps %>% select(-desc) %>% arrange(valor) %>% head(n=10))
+```
+
+
+## Resumir os gastos de todos os vereadores por categoria
+
+```{r results='asis'}
+kable(viaps %>% select(nome, categoria, valor) %>% group_by(nome, categoria) %>% summarise(total=sum(valor)))
+```
+
+
+
+## Quantos meses cada vereador atuou
+```{r results='asis'}
+kable(viaps %>%
+        select(mes, nome) %>%
+        group_by(nome) %>%
+        distinct(mes) %>%
+        group_by(nome) %>%
+        summarise(meses=n()))
+```
+
+## Que vereadores atuaram o ano todo
+```{r results='asis'}
+kable(viaps %>%
+        select(mes, nome) %>%
+        group_by(nome) %>%
+        distinct(mes) %>%
+        group_by(nome) %>%
+        summarise(meses=n()) %>%
+        filter(meses==12) %>%
+        select(nome))
+```
+
+
+## Qual foi a maior despesa do ano de 2018
+
+```{r results='asis'}
+kable(viaps %>% filter(valor == max(valor)))
+```
+
+## Gráfico de barras com a despesas com alimentação por vereador
+```{r results='asis'}
+alimentacao <- viaps %>% filter(categoria=="Alimentação") %>% select(nome, valor) %>% group_by(nome) %>% summarise(total=sum(valor)) %>% arrange(desc(total))
+ggplot(alimentacao, aes(x=reorder(nome, -total), y=total)) +
+  geom_bar(stat="identity", fill="#FF9999", colour="black") +
+  ggtitle("Gastos com Alimentação") +
+  geom_text(aes(label=total), position=position_dodge(width=0.9), hjust=-0.1, vjust=0.4, size=3) +
+  theme_minimal() +
+  ylim(0,max(alimentacao$total) + 5000)+
+  coord_flip() +
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+
+## Quais despesas fazem parte de cada categoria
+
+```{r results='asis'}
+kable(viaps %>% select(categoria, desc) %>% distinct(desc, categoria) %>% group_by(categoria) %>% arrange(categoria, desc))
+```
+
