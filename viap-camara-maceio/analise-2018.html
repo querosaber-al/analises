@@ -120,8 +120,6 @@ $(document).ready(function () {
 </div>
 
 
-<div id="analise-viap-maceio-2018" class="section level1">
-<h1>Análise VIAP Maceió 2018</h1>
 <pre class="r"><code>viaps &lt;- read.csv(url(&quot;https://querosaber-al.info/viap-maceio-2018.csv&quot;))
 viaps &lt;- viaps[,-8]</code></pre>
 <div id="resumir-despesas-por-categoria" class="section level2">
@@ -2637,7 +2635,6 @@ ggplot(alimentacao, aes(x=reorder(nome, -total), y=total)) +
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 
 

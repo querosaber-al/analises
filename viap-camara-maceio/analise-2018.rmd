@@ -10,8 +10,6 @@ require(knitr)
 require(ggplot2)
 ```
 
-# Análise VIAP Maceió 2018
-
 ```{r}
 viaps <- read.csv(url("https://querosaber-al.info/viap-maceio-2018.csv"))
 viaps <- viaps[,-8]
