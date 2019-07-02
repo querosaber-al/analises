@@ -4,6 +4,10 @@ O objetivo desse repositório é consolidar análises a respeito de despesas pú
 
 O repositório será organizado em temas. Por exemplo, o diretório camara-mcz conterá análises de despesas relacionadas a [câmara de vereadores de Maceió](https://www.maceio.al.leg.br/).
 
+## Exemplos de Análises
+
+* [VIAP Câmara de Vereadores de Maceió 2018](https://github.com/querosaber-al/analises/blob/master/viap-camara-maceio/analise-2018.html)
+
 ## Como Contribuir
 
 Somos um grupo muito pequeno e ficaremos muito felizes com a sua colaboração! Se tiver correções, sugestões sobre como melhorar as análises ou informações que gostaria de ver apresentadas pode [criar issues](https://github.com/querosaber-al/analises/issues/new) ou nos enviar PRs.
