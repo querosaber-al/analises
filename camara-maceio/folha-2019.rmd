@@ -1,0 +1,78 @@
+---
+title: "Folha de pagamento câmara de Maceio 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(dplyr)
+require(stringr)
+knitr::opts_chunk$set(echo = TRUE)
+
+formatBRL <- function(f) {
+  formatC(f, format="f", digits=2, big.mark=".", decimal.mark = ",")
+}
+```
+
+```{r}
+folha <- read.csv(url("https://querosaber-al.info/folha-maceio-1q-2019.csv"))
+```
+
+* Salário bruto de um vereador: R$ 15.031,76
+
+* Média de remunerações pagas a vereadores:
+
+```{r}
+folha %>%
+    filter(vinculo == 'VEREADOR') %>%
+    summarise(media=formatBRL(sum(remuneracao)/n()))
+```
+
+Total de pessoas
+
+```{r}
+knitr::kable(folha %>% group_by(mes) %>%
+               summarise(func=n(), func_por_vereador=n()/21,
+                         tot_salario=formatBRL(sum(remuneracao)),
+                         media_salario_por_vereador=formatBRL(sum(remuneracao)/n())),
+             align=c('c','c','l','r','r'))
+
+cat("Média número funcionários por mês:", NROW(folha)/4, "\n")
+cat("Média número funcionários por mês por vereador:", signif((NROW(folha)/4)/21, digits=3), "\n")
+cat("Média salários por mês:", formatBRL(signif(sum(folha$remuneracao)/4, digits=3)), "\n")
+cat("Média salários por mês por vereador:", formatBRL(signif((sum(folha$remuneracao)/4)/21, digits=3)), "\n")
+```
+
+
+# Vinculos
+
+* Temos 3 vínculos: estatutário, vereador e commisionado.
+
+```{r}
+knitr::kable(folha %>%
+               group_by(vinculo) %>%
+               summarise(
+                 media_func=n()/4,
+                 media_salarios=formatBRL(sum(remuneracao)/4),
+                 media_salarios_func=formatBRL(sum(remuneracao)/(n()))),
+             align=c('l', 'c', 'r', 'r'))
+```
+
+```{r}
+folha %>% filter(vinculo == 'ESTATUTARIO') %>% filter(remuneracao == max(remuneracao))
+
+# Constatamos que o min(remueracao) refere-se a uma servidora que saiu no mês de Março e por
+# isso recebeu proporcional. Removemos essa entrada.
+folha %>% filter(vinculo == 'ESTATUTARIO' & matricula != 57) %>% filter(remuneracao == min(remuneracao))
+```
+
+```{r}
+folha %>% filter(vinculo == 'CARGO COMISSIONADO') %>% filter(remuneracao == max(remuneracao))
+
+# Constatamos que o min(remueracao) refere-se a uma servidora que saiu no mês de Março e por
+# isso recebeu proporcional. Removemos essa entrada.
+folha %>% filter(vinculo == 'CARGO COMISSIONADO' & matricula != 57) %>% filter(remuneracao == min(remuneracao))
+```
+
+
+
+
